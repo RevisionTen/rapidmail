@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace RevisionTen\Rapidmail\Services;
 
-use Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Rapidmail\ApiClient\Client;
+use Rapidmail\ApiClient\Exception\ApiClientException;
 
 class RapidmailService
 {
@@ -23,24 +22,7 @@ class RapidmailService
     public function __construct(array $config)
     {
         $this->config = $config;
-
-        $apiKey = $this->config['api_key'] ?? '';
-        $apiKeyParts = explode('-', $apiKey);
-        $server = end($apiKeyParts);
-
-        if (!$server) {
-            throw new Exception('Mailchimp server could not be read from api_key');
-        }
-
-        $this->client = new Client([
-            'auth' => [
-                'noUserName',
-                $this->config['api_key'],
-            ],
-            'base_uri' => 'https://'.$server.'.api.rapidmail.com/3.0/',
-            'timeout' => 60,
-            'allow_redirects' => true,
-        ]);
+        $this->client = new Client($this->config['api_username_hash'], $this->config['api_password_hash']);
     }
 
     /**
@@ -51,8 +33,9 @@ class RapidmailService
      * @param string|NULL $source
      * @param array       $mergeFields
      *
+     * @throws ApiClientException
+     *
      * @return bool
-     * @throws GuzzleException
      */
     public function subscribe(string $campaign, string $email, string $source = null, array $mergeFields = []): bool
     {
@@ -60,32 +43,20 @@ class RapidmailService
             return false;
         }
 
-        if (null === $source) {
-            $source = 'symfony';
-        }
+        $recipientsService = $this->client->recipients();
 
         $requestData = [
-            'email_address' => $email,
-            'status' => 'pending',
+            'recipientlist_id' => $this->config['campaigns'][$campaign]['list_id'], // Required
+            'email' => $email, // Required
+            'firstname' => $mergeFields['FNAME'] ?? null,
+            'lastname' => $mergeFields['LNAME'] ?? null,
+            'gender' => $mergeFields['gender'] ?? null,
         ];
 
-        if (!empty($mergeFields)) {
-            $requestData['merge_fields'] = $mergeFields;
-        }
-
-        $requestBody = json_encode($requestData);
-
-        $subscriberHash = md5(strtolower($email));
-
-        // Add subscriber to recipient list or update If already exists.
-        $response = $this->client->request('PUT', 'lists/'.$this->config['campaigns'][$campaign]['list_id'].'/members/'.$subscriberHash, [
-            'body' => $requestBody,
-            'http_errors' => false,
-        ]);
-
-        if (200 !== $response->getStatusCode()) {
-            return false;
-        }
+        $recipientsService->create($requestData, [
+                'send_activationmail' => 'yes',
+            ]
+        );
 
         return true;
     }

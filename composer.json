@@ -1,8 +1,8 @@
 {
-    "name": "revision-ten/mailchimp",
+    "name": "revision-ten/rapidmail",
     "type": "library",
-    "description": "A very minimal Mailchimp integration for Symfony",
-    "keywords": ["symfony-bundle", "mailchimp"],
+    "description": "A very minimal Rapidmail integration for Symfony",
+    "keywords": ["symfony-bundle", "rapidmail"],
     "license": "MIT",
     "authors": [
         {
@@ -13,9 +13,9 @@
     "require": {
         "php": "^7.1",
         "ext-json": "*",
-        "guzzlehttp/guzzle": "^6"
+        "rapidmail/rapidmail-apiv3-client-php": "^1.0.1"
     },
     "autoload": {
-        "psr-4": { "RevisionTen\\Mailchimp\\": "" }
+        "psr-4": { "RevisionTen\\Rapidmail\\": "" }
     }
 }

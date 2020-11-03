@@ -25,9 +25,9 @@ RevisionTen\Rapidmail\RapidmailBundle::class => ['all' => true],
 Configure the bundle:
 
 ```YAML
-# Mailchimp example config.
 rapidmail:
-    api_key: 'XXXXXXXXXXXXXXXXXXXXXXX-us5' # Your mailchimp api key.
+    api_username_hash: 'XXXXXXX'
+    api_password_hash: 'XXXXXXX'
     campaigns:
         dailyNewsletterCampagin:
             list_id: '123456' # Id of your newsletter list.

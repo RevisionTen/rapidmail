@@ -1,6 +1,7 @@
 # Rapidmail example config.
 rapidmail:
-    api_key: 'XXXXXXXXXXXXXXXXXXXXXXX-us5' # Your rapidmail api key.
+    api_username_hash: 'XXXXXXX'
+    api_password_hash: 'XXXXXXX'
     campaigns:
         dailyNewsletterCampagin:
             list_id: '123456' # Id of your newsletter list.
