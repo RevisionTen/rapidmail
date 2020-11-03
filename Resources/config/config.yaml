@@ -1,5 +1,5 @@
 services:
-    RevisionTen\Mailchimp\Services\MailchimpService:
+    RevisionTen\Rapidmail\Services\RapidmailService:
         autowire: true
         arguments:
-            $config: '%mailchimp%'
+            $config: '%rapidmail%'

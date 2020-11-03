@@ -6,6 +6,7 @@ namespace RevisionTen\Rapidmail\Services;
 
 use Rapidmail\ApiClient\Client;
 use Rapidmail\ApiClient\Exception\ApiClientException;
+use Rapidmail\ApiClient\Exception\ApiException;
 
 class RapidmailService
 {
@@ -33,9 +34,9 @@ class RapidmailService
      * @param string|NULL $source
      * @param array       $mergeFields
      *
-     * @throws ApiClientException
-     *
      * @return bool
+     *
+     * @throws ApiClientException
      */
     public function subscribe(string $campaign, string $email, string $source = null, array $mergeFields = []): bool
     {
@@ -68,7 +69,8 @@ class RapidmailService
      * @param string $email
      *
      * @return bool
-     * @throws GuzzleException
+     *
+     * @throws ApiException
      */
     public function unsubscribe(string $campaign, string $email): bool
     {
@@ -76,19 +78,16 @@ class RapidmailService
             return false;
         }
 
-        $subscriberHash = md5(strtolower($email));
+        $recipientsService = $this->client->recipients();
 
-        $requestBody = json_encode([
-            'email_address' => $email,
-            'status' => 'unsubscribed',
+        $collection = $recipientsService->query([
+            'email' => $email,
         ]);
 
-        // Unsubscribe email.
-        $response = $this->client->request('PATCH', '/lists/'.$this->config['campaigns'][$campaign]['list_id'].'/members/'.$subscriberHash, [
-            'body' => $requestBody,
-            'http_errors' => false,
-        ]);
+        $recipientId = $collection->current();
 
-        return 200 === $response->getStatusCode();
+        print_r($recipientId);exit;
+
+        return $recipientsService->delete($recipientId);
     }
 }

@@ -14,7 +14,8 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('rapidmail');
         $rootNode
             ->children()
-                ->scalarNode('api_key')->end()
+                ->scalarNode('api_username_hash')->end()
+                ->scalarNode('api_password_hash')->end()
                 ->arrayNode('campaigns')
                     ->arrayPrototype()
                         ->children()
