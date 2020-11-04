@@ -47,12 +47,19 @@ class RapidmailService
         $recipientsService = $this->client->recipients();
 
         $requestData = [
-            'recipientlist_id' => $this->config['campaigns'][$campaign]['list_id'], // Required
-            'email' => $email, // Required
-            'firstname' => $mergeFields['FNAME'] ?? null,
-            'lastname' => $mergeFields['LNAME'] ?? null,
-            'gender' => $mergeFields['gender'] ?? null,
+            'recipientlist_id' => $this->config['campaigns'][$campaign]['list_id'],
+            'email' => $email,
         ];
+
+        if (!empty($mergeFields['FNAME'])) {
+            $requestData['firstname'] = $mergeFields['FNAME'];
+        }
+        if (!empty($mergeFields['LNAME'])) {
+            $requestData['lastname'] = $mergeFields['LNAME'];
+        }
+        if (!empty($mergeFields['gender'])) {
+            $requestData['gender'] = $mergeFields['gender'];
+        }
 
         $recipientsService->create($requestData, [
                 'send_activationmail' => 'yes',
