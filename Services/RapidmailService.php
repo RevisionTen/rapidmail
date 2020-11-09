@@ -7,6 +7,7 @@ namespace RevisionTen\Rapidmail\Services;
 use Rapidmail\ApiClient\Client;
 use Rapidmail\ApiClient\Exception\ApiClientException;
 use Rapidmail\ApiClient\Exception\ApiException;
+use Rapidmail\ApiClient\Service\Response\HalResponse;
 
 class RapidmailService
 {
@@ -35,8 +36,6 @@ class RapidmailService
      * @param array       $mergeFields
      *
      * @return bool
-     *
-     * @throws ApiClientException
      */
     public function subscribe(string $campaign, string $email, string $source = null, array $mergeFields = []): bool
     {
@@ -61,10 +60,19 @@ class RapidmailService
             $requestData['gender'] = $mergeFields['gender'];
         }
 
-        $recipientsService->create($requestData, [
-                'send_activationmail' => 'yes',
-            ]
-        );
+        try {
+            $recipientsService->create($requestData, [
+                    'send_activationmail' => 'yes',
+                ]
+            );
+        } catch (ApiException $exception) {
+            if ($exception->getCode() === 409) {
+                // Is already subscribed.
+                return true;
+            }
+
+            return false;
+        }
 
         return true;
     }
@@ -76,8 +84,6 @@ class RapidmailService
      * @param string $email
      *
      * @return bool
-     *
-     * @throws ApiException
      */
     public function unsubscribe(string $campaign, string $email): bool
     {
@@ -87,14 +93,29 @@ class RapidmailService
 
         $recipientsService = $this->client->recipients();
 
-        $collection = $recipientsService->query([
-            'email' => $email,
-        ]);
+        try {
+            /**
+             * @var HalResponseResourceIterator
+             */
+            $collection = $recipientsService->query([
+                'recipientlist_id' => $this->config['campaigns'][$campaign]['list_id'],
+                'email' => $email,
+            ]);
 
-        $recipientId = $collection->current();
+            foreach ($collection as $result) {
+                /**
+                 * @var HalResponse $result
+                 */
+                $id = $result->toArray()['id'] ?? null;
+                if ($id && $recipientsService->delete($id)) {
+                    return true;
+                    break;
+                }
+            }
+        } catch (ApiException $exception) {
+            return false;
+        }
 
-        print_r($recipientId);exit;
-
-        return $recipientsService->delete($recipientId);
+        return false;
     }
 }
