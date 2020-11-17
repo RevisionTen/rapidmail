@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace RevisionTen\Rapidmail\Services;
 
 use Rapidmail\ApiClient\Client;
-use Rapidmail\ApiClient\Exception\ApiClientException;
 use Rapidmail\ApiClient\Exception\ApiException;
 use Rapidmail\ApiClient\Service\Response\HalResponse;
+use Rapidmail\ApiClient\Service\Response\HalResponseResourceIterator;
 
 class RapidmailService
 {
@@ -109,7 +109,6 @@ class RapidmailService
                 $id = $result->toArray()['id'] ?? null;
                 if ($id && $recipientsService->delete($id)) {
                     return true;
-                    break;
                 }
             }
         } catch (ApiException $exception) {
