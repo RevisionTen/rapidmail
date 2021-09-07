@@ -16,7 +16,7 @@
         "rapidmail/rapidmail-apiv3-client-php": "^1.0.1"
     },
     "conflict": {
-        "symfony/dependency-injection": "<4.2",
+        "symfony/dependency-injection": "<4.2"
     },
     "autoload": {
         "psr-4": { "RevisionTen\\Rapidmail\\": "" }
