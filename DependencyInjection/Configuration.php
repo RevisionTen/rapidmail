@@ -9,10 +9,8 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        // Todo: https://symfony.com/blog/new-in-symfony-4-2-important-deprecations?#deprecated-tree-builders-without-root-nodes
-        $rootNode = $treeBuilder->root('rapidmail');
-        $rootNode
+        $treeBuilder = new TreeBuilder('rapidmail');
+        $treeBuilder->getRootNode()
             ->children()
                 ->scalarNode('api_username_hash')->end()
                 ->scalarNode('api_password_hash')->end()

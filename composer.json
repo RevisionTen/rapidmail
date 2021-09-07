@@ -11,9 +11,12 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.4",
         "ext-json": "*",
         "rapidmail/rapidmail-apiv3-client-php": "^1.0.1"
+    },
+    "conflict": {
+        "symfony/dependency-injection": "<4.2",
     },
     "autoload": {
         "psr-4": { "RevisionTen\\Rapidmail\\": "" }

@@ -7,18 +7,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class RapidmailBundle extends Bundle
 {
-    public const VERSION = '0.0.1';
+    public const VERSION = '0.0.2';
 
-    /**
-     * {@inheritdoc}
-     */
     public function boot()
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container)
     {
     }

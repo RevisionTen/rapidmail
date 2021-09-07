@@ -11,15 +11,9 @@ use Rapidmail\ApiClient\Service\Response\HalResponseResourceIterator;
 
 class RapidmailService
 {
-    /**
-     * @var array
-     */
-    private $config;
+    private array $config;
 
-    /**
-     * @var Client
-     */
-    private $client;
+    private Client $client;
 
     public function __construct(array $config)
     {
